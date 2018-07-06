@@ -14,8 +14,7 @@ def create_app(*config_obj):
         app_.config.from_object(obj)
 
     db.init_app(app_)
-    app_
-    .config['db'] = db
+    app_.config['db'] = db
 
     route(app_)
 
