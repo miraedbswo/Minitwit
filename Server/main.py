@@ -1,10 +1,8 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager
 
-from api import route
-import config
-
-db = SQLAlchemy()
+from api import route, log
+from Models.account import db
 
 
 def create_app(*config_obj):
@@ -17,8 +15,12 @@ def create_app(*config_obj):
     app_.config['db'] = db
 
     route(app_)
+    log(app_)
+    JWTManager(app_)
+
+    with app_.app_context():
+        db.create_all()
 
     return app_
 
 
-app = create_app(config.Config())
