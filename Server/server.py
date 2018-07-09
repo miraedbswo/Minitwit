@@ -1,6 +1,6 @@
 from main import create_app
-import config
+from config import Config
 
-app = create_app(config.Config())
+app = create_app(Config)
 
-app.run()
+app.run(debug=True, port=80)
