@@ -1,12 +1,14 @@
-from flask import Flask, g
+from flask import g
 import logging
 from logging.handlers import RotatingFileHandler
 
 from api import user
+from api import post
 
 
 def route(app):
     app.register_blueprint(user.api.blueprint)
+    app.register_blueprint(post.api.blueprint)
 
 
 def log(app):
@@ -22,4 +24,4 @@ def log(app):
         g.logger = app.logger
         print(g.logger)
 
-        g.logger.info('<===server logging===>')
+        g.logger.info('server logging')
