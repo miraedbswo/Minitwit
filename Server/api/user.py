@@ -5,7 +5,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from Models.account import UserModel
 import json
 
-blueprint = Blueprint('simple_blueprint', __name__)
+blueprint = Blueprint('user_blueprint', __name__, url_prefix='/user')
 api = Api(blueprint)
 
 
