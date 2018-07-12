@@ -1,14 +1,22 @@
-from flask import g
+from flask import g, Response
+import json
 import logging
 from logging.handlers import RotatingFileHandler
 
-from api import user
-from api import post
-
 
 def route(app):
+    from api import user
     app.register_blueprint(user.api.blueprint)
+    from api import post
     app.register_blueprint(post.api.blueprint)
+
+
+def get_200_response(data):
+    return Response(
+        json.dumps(data, ensure_ascii=False),
+        status=200,
+        content_type='application/json;charset=utf-8'
+    )
 
 
 def log(app):
