@@ -1,8 +1,9 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from mongoengine import connect
 
-from api import route, log
-from Models.account import db
+from app import route, log
+from app import db
 
 
 def create_app(*config_obj):
@@ -11,12 +12,15 @@ def create_app(*config_obj):
     for obj in config_obj:
         app_.config.from_object(obj)
 
-    db.init_app(app_)
-    app_.config['db'] = db
+    connect(**app_.config['MONGODB_SETTINGS'])
+    # db.init_app(app_)
+    # app_.config['db'] = db
 
     route(app_)
     log(app_)
-    JWTManager(app_)
+
+    JWTManager().init_app(app_)
+
 
     with app_.app_context():
         db.create_all()
