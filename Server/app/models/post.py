@@ -19,10 +19,9 @@ class Comment(EmbeddedDocument):
     # 덧글 단 시간
 
 
-class Post(Document):
+class PostModel(Document):
     title = StringField(
         max_length=100,
-        primary_key=True
     )
     # Post의 제목
 
@@ -30,6 +29,9 @@ class Post(Document):
         document_type='UserModel',
     )
     # 작성자
+
+    content = StringField()
+    # 작성할 글
 
     comments = ListField(
         EmbeddedDocumentListField(Comment)
@@ -44,8 +46,3 @@ class Post(Document):
     meta = {
         'allow_inheritance': True
     }
-
-
-class TextPost(Post):
-    body = StringField()
-
