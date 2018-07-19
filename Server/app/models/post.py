@@ -9,7 +9,6 @@ class Comment(EmbeddedDocument):
 
     name = ReferenceField(
         document_type='UserModel',
-        primary_key=True
     )
     # 작성자
 
@@ -22,6 +21,7 @@ class Comment(EmbeddedDocument):
 class PostModel(Document):
     title = StringField(
         max_length=100,
+        primary_key=True,
     )
     # Post의 제목
 
