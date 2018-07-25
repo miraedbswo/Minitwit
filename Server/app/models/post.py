@@ -2,15 +2,13 @@ from mongoengine import *
 
 from datetime import datetime
 
-from .account import UserModel
-
 
 class Comment(EmbeddedDocument):
     content = StringField()
     # comment의 content
 
     author = ReferenceField(
-        UserModel
+        document_type="UserModel"
     )
     # 작성자
 
@@ -27,8 +25,8 @@ class PostModel(Document):
     )
     # Post의 제목
 
-    name = ReferenceField(
-        UserModel
+    author = ReferenceField(
+        document_type="UserModel"
     )
     # 작성자
 
