@@ -1,9 +1,10 @@
 from flask import Blueprint, abort, request, redirect, url_for
 from flask_restful import Api
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from mongoengine import *
 
 from app.views import BaseResource
+from app.models.account import UserModel
 from app.models.post import Comment, PostModel
 
 blueprint = Blueprint(__name__, __name__)
@@ -11,7 +12,7 @@ api = Api(blueprint)
 api.prefix = '/post'
 
 
-@api.resource('/')
+@api.resource('')
 class HandleRequests(BaseResource):
     @jwt_required
     def get(self):
@@ -40,9 +41,11 @@ class Posting(BaseResource):
         title = payload['title']
         content = payload['content']
 
+        user = UserModel.objects(id=get_jwt_identity()).first()
+
         new_posting = PostModel(
             title=title,
-            # author= 설정 해야 함
+            author=user.name,
             content=content
         ).save()
 
