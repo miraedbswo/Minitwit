@@ -11,7 +11,6 @@ class UserModel(Document):
 
     pw = StringField(
         min_length=8,
-        max_length=20,
         required=True
     )
     # 유저 pw
@@ -30,6 +29,10 @@ class UserModel(Document):
         default=datetime.now
     )
     # 회원 가입 시간
+
+    is_admin = BooleanField(
+        default=False
+    )
 
     meta = {
         'allow_inheritance': True
