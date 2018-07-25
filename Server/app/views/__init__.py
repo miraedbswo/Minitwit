@@ -6,9 +6,9 @@ import json
 class BaseResource(Resource):
 
     @classmethod
-    def unicode_safe_json_dumps(cls, data):
+    def unicode_safe_json_dumps(cls, data, status_code=200):
         return Response(
             json.dumps(data, ensure_ascii=False),
-            status=200,
+            status_code,
             content_type='application/json; charset=utf8'
         )
