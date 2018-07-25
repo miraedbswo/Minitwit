@@ -6,8 +6,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app.models.account import UserModel
 from app.views import BaseResource
 
-import json
-
 blueprint = Blueprint(__name__, __name__)
 api = Api(blueprint)
 api.prefix = '/user'
@@ -29,16 +27,24 @@ class Signup(BaseResource):
         email = payload['email']
 
         if UserModel.objects(id=id):
-            abort(409)
+            return self.unicode_safe_json_dumps({
+                "msg": '중복된 id 값입니다.'
+            }, 409)
 
-        UserModel(
-            id=id,
-            pw=generate_password_hash(pw),
-            name=name,
-            email=email
-        ).save()
+        try:
+            hashed_pw = generate_password_hash(pw)
 
-        return Response('', 201)
+            UserModel(
+                id=id,
+                pw=hashed_pw,
+                name=name,
+                email=email
+            ).save()
+
+        except TypeError:
+            abort(400)
+
+        return Response('회원가입 완료', 201)
 
 
 @api.resource('/login')
@@ -57,11 +63,13 @@ class Login(BaseResource):
 
         user = UserModel.objects(id=user_id).first()
 
+        if user is None:
+            abort(406)
+
         if check_password_hash(user.pw, user_pw):
             return {
-                'access_token': create_access_token(user),
-                'refresh_token': create_refresh_token(user)
+                'access_token': create_access_token(identity=user_id),
+                'refresh_token': create_refresh_token(identity=user_id)
             }
-
         else:
-            abort(401)
+            abort(406)
