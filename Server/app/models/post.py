@@ -19,9 +19,13 @@ class Comment(EmbeddedDocument):
 
 
 class PostModel(Document):
+    post_num = IntField(
+        primary_key=True
+    )
+    # 게시물 번호
+
     title = StringField(
         max_length=100,
-        primary_key=True,
     )
     # Post의 제목
 
