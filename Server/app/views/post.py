@@ -43,20 +43,19 @@ class Posting(BaseResource):
 
         user = UserModel.objects(id=get_jwt_identity()).first()
 
-        new_posting = PostModel(
+        PostModel(
             title=title,
             author=user.name,
             content=content
         ).save()
 
-        return {
-            'id': str(new_posting.id)
-        }, 201
-        pass
+        return self.unicode_safe_json_dumps({
+            "msg": "게시물 작성이 완료되었습니다."
+        }, 201)
 
 
 @api.resource('/<int:num>')
-class In_post(BaseResource):
+class Inpost(BaseResource):
     def get(self, num: int):
         return {
             "data": num
