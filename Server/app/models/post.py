@@ -25,8 +25,7 @@ class PostModel(Document):
     )
     # Post의 제목
 
-    author = ReferenceField(
-        document_type="UserModel"
+    author = StringField(
     )
     # 작성자
 
