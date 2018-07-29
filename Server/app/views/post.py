@@ -29,7 +29,7 @@ class HandleRequests(BaseResource):
         for post in all_post:
             return self.unicode_safe_json_dumps({
                 'title': post.title,
-                'author': user.name,
+                'author': post.author,
                 'content': post.content,
                 'comments': post.comments,
                 'timestamp': str(post.timestamp)
