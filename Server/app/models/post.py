@@ -12,17 +12,13 @@ class Comment(EmbeddedDocument):
     )
     # 작성자
 
-    timestamp = DateTimeField(
+    timestamp = StringField(
         default=datetime.now
     )
     # 덧글 단 시간
 
 
 class PostModel(Document):
-    post_num = IntField(
-        primary_key=True
-    )
-    # 게시물 번호
 
     title = StringField(
         max_length=100,
@@ -42,9 +38,7 @@ class PostModel(Document):
     )
     # 덧글
 
-    timestamp = DateTimeField(
-        default=datetime.now
-    )
+    timestamp = StringField()
     # Post 올라온 시간
 
     meta = {
