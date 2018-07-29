@@ -18,14 +18,23 @@ api.prefix = '/post'
 class HandleRequests(BaseResource):
     @jwt_required
     def get(self):
-        for post in PostModel.objects().all():
+
+        user = UserModel.objects(id=get_jwt_identity()).first()
+
+        all_post = PostModel.objects(author=user.name).all()
+
+        if user is None or all_post is None:
+            abort(406)
+
+        for post in all_post:
             return self.unicode_safe_json_dumps({
                 'title': post.title,
-                'author': post.author,
+                'author': user.name,
                 'content': post.content,
                 'comments': post.comments,
-                'uptime': post.uptime
+                'timestamp': str(post.timestamp)
             })
+        # 1개의 게시물만 return 되는 오류 수정 해야 함.
 
     def post(self):
         return redirect(url_for(Posting))
