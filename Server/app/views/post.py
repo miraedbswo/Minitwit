@@ -1,7 +1,6 @@
 from flask import Blueprint, abort, request, redirect, url_for
 from flask_restful import Api
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from mongoengine import *
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from datetime import datetime
 
@@ -26,6 +25,7 @@ class HandleRequests(BaseResource):
             abort(406)
 
         return self.unicode_safe_json_dumps([{
+            'obj_id': post.id.__str__(),
             'title': post.title,
             'author': post.author,
             'content': post.content,
@@ -65,12 +65,17 @@ class Posting(BaseResource):
         }, 201)
 
 
-# @api.resource('/<int:num>')
-# class Inpost(BaseResource):
-#     def get(self, num: int):
-#         return {
-#             "data": num
-#         }, 200
-#
-#     def post(self):
-#         pass
+@api.resource('/<obj_id>')
+class PostObject(BaseResource):
+    @jwt_required
+    def get(self, obj_id):
+
+        post = PostModel.objects(id=obj_id).first()
+
+        return self.unicode_safe_json_dumps({
+            'title': post.title,
+            'author': post.author,
+            'content': post.content,
+            'comments': post.comments,
+            'timestamp': post.timestamp.__str__()
+        }, 200)
