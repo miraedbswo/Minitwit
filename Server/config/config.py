@@ -17,5 +17,5 @@ class Config:
 
     JWT_SECRET_KEY = 'IAmJWTSecretKey'
 
-    SECRET_KEY = 'IAmSecretKey'
+    SECRET_KEY = 'safsdfdsafsfd12312312fsefsjoi'
 
