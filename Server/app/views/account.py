@@ -24,7 +24,7 @@ class ChangePW(BaseResource):
 
         user = UserModel.objects(id=get_jwt_identity()).first()
 
-        self.check_user_is_exist(user)
+        self.check_is_exist(user)
 
         if not check_password_hash(user.pw, current_pw):
             abort(403)

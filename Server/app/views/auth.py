@@ -27,7 +27,7 @@ class Signup(BaseResource):
         name = payload['name']
         email = payload['email']
 
-        if UserModel.objects(id=id):
+        if UserModel.objects(id=id).first():
             return self.unicode_safe_json_dumps({
                 "msg": '중복된 id 값입니다.'
             }, 409)
@@ -64,7 +64,7 @@ class Login(BaseResource):
 
         user = UserModel.objects(id=user_id).first()
 
-        self.check_user_is_exist(user)
+        self.check_is_exist(user)
 
         if check_password_hash(user.pw, user_pw):
             return {
@@ -82,7 +82,7 @@ class GetRefreshToken(BaseResource):
 
         user = UserModel.objects(id=get_jwt_identity()).first()
 
-        self.check_user_is_exist(user)
+        self.check_is_exist(user)
 
         return {
             'access_token': create_access_token(identity=user.id),
