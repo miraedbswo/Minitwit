@@ -15,6 +15,6 @@ class BaseResource(Resource):
         )
 
     @classmethod
-    def check_user_is_exist(cls, user):
-        if user is None:
+    def check_is_exist(cls, data):
+        if data is None:
             abort(406)
