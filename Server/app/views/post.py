@@ -20,21 +20,18 @@ class HandleRequests(BaseResource):
     def get(self):
 
         user = UserModel.objects(id=get_jwt_identity()).first()
-
         all_post = PostModel.objects(author=user.name).all()
 
         if user is None or all_post is None:
             abort(406)
 
-        for post in all_post:
-            return self.unicode_safe_json_dumps({
-                'title': post.title,
-                'author': post.author,
-                'content': post.content,
-                'comments': post.comments,
-                'timestamp': str(post.timestamp)
-            })
-        # 1개의 게시물만 return 되는 오류 수정 해야 함.
+        return self.unicode_safe_json_dumps([{
+            'title': post.title,
+            'author': post.author,
+            'content': post.content,
+            'comments': post.comments,
+            'timestamp': post.timestamp.__str__()
+        } for post in all_post], 200)
 
     def post(self):
         return redirect(url_for(Posting))
@@ -60,22 +57,20 @@ class Posting(BaseResource):
             title=title,
             author=user.name,
             content=content,
-            timestamp=datetime.now().__str__()
+            timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S').__str__()
         ).save()
 
         return self.unicode_safe_json_dumps({
             "msg": "게시물 작성이 완료되었습니다.",
-            "nickname": user.name,
-            "datetime": datetime.now().__str__()
         }, 201)
 
 
-@api.resource('/<int:num>')
-class Inpost(BaseResource):
-    def get(self, num: int):
-        return {
-            "data": num
-        }, 200
-
-    def post(self):
-        pass
+# @api.resource('/<int:num>')
+# class Inpost(BaseResource):
+#     def get(self, num: int):
+#         return {
+#             "data": num
+#         }, 200
+#
+#     def post(self):
+#         pass
