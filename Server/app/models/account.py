@@ -27,10 +27,10 @@ class UserModel(Document):
 
     uuid = StringField()
 
+    # 회원 가입 시간
     signup_time = DateTimeField(
         default=datetime.now
     )
-    # 회원 가입 시간
 
     is_admin = BooleanField(
         default=False

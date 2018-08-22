@@ -25,12 +25,12 @@ class HandleRequests(BaseResource):
             abort(406)
 
         return self.unicode_safe_json_dumps([{
-            'obj_id': post.id.__str__(),
+            'obj_id': str(post.id),
             'title': post.title,
             'author': post.author,
             'content': post.content,
             'comments': post.comments,
-            'timestamp': post.timestamp.__str__()
+            'timestamp': str(post.timestamp)
         } for post in all_post], 200)
 
     def post(self):
@@ -57,7 +57,7 @@ class Posting(BaseResource):
             title=title,
             author=user.name,
             content=content,
-            timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S').__str__()
+            timestamp=str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         ).save()
 
         return self.unicode_safe_json_dumps({
@@ -72,10 +72,12 @@ class PostObject(BaseResource):
 
         post = PostModel.objects(id=obj_id).first()
 
+        self.check_is_exist(post)
+
         return self.unicode_safe_json_dumps({
             'title': post.title,
             'author': post.author,
             'content': post.content,
             'comments': post.comments,
-            'timestamp': post.timestamp.__str__()
+            'timestamp': str(post.timestamp)
         }, 200)

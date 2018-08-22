@@ -72,7 +72,7 @@ class Login(BaseResource):
             return {
                 'access_token': create_access_token(identity=user_id),
                 'refresh_token': create_refresh_token(identity=user_id)
-            }
+            }, 200
         else:
             abort(406)
 
