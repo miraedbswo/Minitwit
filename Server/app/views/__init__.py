@@ -18,3 +18,12 @@ class BaseResource(Resource):
     def check_is_exist(cls, data):
         if data is None:
             abort(406)
+
+
+def router(app_):
+    from app.views import auth
+    app_.register_blueprint(auth.api.blueprint)
+    from app.views import post
+    app_.register_blueprint(post.api.blueprint)
+    from app.views import account
+    app_.register_blueprint(account.api.blueprint)
