@@ -19,18 +19,20 @@ class Signup(BaseResource):
 
     def post(self):
         payload = request.json
-        if not payload:
-            abort(406)
 
         id = payload['id']
         pw = payload['pw']
+        pw_re = payload['pw_re']
         name = payload['name']
-        email = payload['email']
+        uuid = payload['uuid']
 
         if UserModel.objects(id=id).first():
             return self.unicode_safe_json_dumps({
                 "msg": '중복된 id 값입니다.'
             }, 409)
+
+        if pw != pw_re:
+            abort(406)
 
         try:
             hashed_pw = generate_password_hash(pw)
@@ -39,7 +41,7 @@ class Signup(BaseResource):
                 id=id,
                 pw=hashed_pw,
                 name=name,
-                email=email
+                uuid=uuid
             ).save()
 
         except TypeError:
