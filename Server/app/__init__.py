@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
 
-from app.views import router
+from app.views import Router
 
 
 def create_app(*config_obj):
@@ -15,7 +15,7 @@ def create_app(*config_obj):
     # db.init_app(app_)
     # app_.config['db'] = db
 
-    router(app_)
+    Router().init_app(app_)
 
     JWTManager().init_app(app_)
 
