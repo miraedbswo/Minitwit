@@ -15,7 +15,5 @@ class Config:
     # SQLALCHEMY_DATABASE_URI = "sqlite:///models/models.db"
     # SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    JWT_SECRET_KEY = 'IAmJWTSecretKey'
-
-    SECRET_KEY = 'safsdfdsafsfd12312312fsefsjoi'
+    SECRET_KEY = 'IAMASECRETKEY'
 
