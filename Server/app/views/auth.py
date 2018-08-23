@@ -68,13 +68,10 @@ class Login(BaseResource):
 
         self.check_is_exist(user)
 
-        if check_password_hash(user.pw, user_pw):
-            return {
-                'access_token': create_access_token(identity=user_id),
-                'refresh_token': create_refresh_token(identity=user_id)
-            }, 200
-        else:
-            abort(406)
+        return {
+            'access_token': create_access_token(identity=user_id),
+            'refresh_token': create_refresh_token(identity=user_id)
+        }, 200 if check_password_hash(user.pw, user_pw) else abort(406)
 
 
 @api.resource('/refresh')
