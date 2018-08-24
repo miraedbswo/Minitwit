@@ -5,8 +5,15 @@ import os
 class Config:
     SERVICE_NAME = 'Minitwit'
 
-    host = socket.gethostbyname(socket.gethostname())
-    port = 80
+    HOST = socket.gethostbyname(socket.gethostname())
+    PORT = 80
+    DEBUG = False
+
+    RUN_SETTINGS = {
+        "host": HOST,
+        "port": PORT,
+        "debug": DEBUG
+    }
 
     MONGODB_SETTINGS = {
         'db': SERVICE_NAME,
