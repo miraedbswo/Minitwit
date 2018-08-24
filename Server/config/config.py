@@ -6,6 +6,7 @@ class Config:
     SERVICE_NAME = 'Minitwit'
 
     host = socket.gethostbyname(socket.gethostname())
+    port = 80
 
     MONGODB_SETTINGS = {
         'db': SERVICE_NAME,
