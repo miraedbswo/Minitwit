@@ -12,6 +12,18 @@ api = Api(blueprint)
 api.prefix = '/user'
 
 
+@api.resource('/<str: my_name>')
+class Mypage(BaseResource):
+    @jwt_required
+    def get(self, my_name):
+        user = UserModel.objects(name=my_name).first()
+        self.check_is_exist(user)
+
+        return self.unicode_safe_json_dumps({
+            "name": user.name,
+        })
+
+
 @api.resource('/change-pw')
 class ChangePW(BaseResource):
     @jwt_required
@@ -34,6 +46,4 @@ class ChangePW(BaseResource):
 
         user.update(pw=generate_password_hash(new_pw))
 
-        return self.unicode_safe_json_dumps({
-            "msg": f"비밀번호가 {new_pw}로 변경되었습니다.",
-        }, 200)
+        return '', 200

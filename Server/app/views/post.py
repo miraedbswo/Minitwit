@@ -10,19 +10,15 @@ from app.models.post import PostModel
 
 blueprint = Blueprint(__name__, __name__)
 api = Api(blueprint)
-api.prefix = '/post'
 
 
-@api.resource('')
+@api.resource('/post')
 class HandleRequests(BaseResource):
     @jwt_required
     def get(self):
 
         user = UserModel.objects(id=get_jwt_identity()).first()
         all_post = PostModel.objects(author=user.name).all()
-
-        if user is None or all_post is None:
-            abort(406)
 
         return self.unicode_safe_json_dumps([{
             'obj_id': str(post.id),
@@ -31,14 +27,8 @@ class HandleRequests(BaseResource):
             'content': post.content,
             'comments': post.comments,
             'timestamp': str(post.timestamp)
-        } for post in all_post], 200)
+        } for post in all_post], 200) if user or all_post else abort(406)
 
-    def post(self):
-        return redirect(url_for(Posting))
-
-
-@api.resource('/submit')
-class Posting(BaseResource):
     @jwt_required
     def post(self):
         payload = request.json
@@ -60,12 +50,10 @@ class Posting(BaseResource):
             timestamp=str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         ).save()
 
-        return self.unicode_safe_json_dumps({
-            "msg": "게시물 작성이 완료되었습니다.",
-        }, 201)
+        return '', 201
 
 
-@api.resource('/<obj_id>')
+@api.resource('/post/<obj_id>')
 class PostObject(BaseResource):
     @jwt_required
     def get(self, obj_id):

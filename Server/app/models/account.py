@@ -1,6 +1,5 @@
 from mongoengine import *
 from datetime import datetime
-from uuid import uuid4
 
 
 class UserModel(Document):
@@ -22,6 +21,7 @@ class UserModel(Document):
     # 유저 이름
 
     email = StringField(
+        required=True
     )
     # 유저 email
 

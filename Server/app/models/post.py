@@ -20,3 +20,6 @@ class PostModel(Document):
     meta = {
         'allow_inheritance': True
     }
+
+
+class CommentModel():

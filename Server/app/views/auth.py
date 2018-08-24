@@ -47,7 +47,7 @@ class Signup(BaseResource):
         except TypeError:
             abort(400)
 
-        return Response('회원가입 완료', 201)
+        return Response('', 201)
 
 
 @api.resource('/login')

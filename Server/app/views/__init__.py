@@ -13,7 +13,9 @@ class BaseResource(Resource):
         한글을 json 으로 보낼 때 unicode_safe_json_dumps를 사용한다.
 
         :param data: json type (dict)
+        :param status_code: http status code
         """
+
         return Response(
             json.dumps(data, ensure_ascii=False),
             status_code,
