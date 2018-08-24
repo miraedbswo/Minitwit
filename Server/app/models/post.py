@@ -22,4 +22,4 @@ class PostModel(Document):
     }
 
 
-class CommentModel():
+# class CommentModel():
