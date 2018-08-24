@@ -1,8 +1,11 @@
+import socket
 import os
 
 
 class Config:
     SERVICE_NAME = 'Minitwit'
+
+    host = socket.gethostbyname(socket.gethostname())
 
     MONGODB_SETTINGS = {
         'db': SERVICE_NAME,
