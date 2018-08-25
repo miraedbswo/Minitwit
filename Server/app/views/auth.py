@@ -1,7 +1,7 @@
 from flask import Blueprint, Response, abort, request
 from flask_restful import Api
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_refresh_token_required, \
-                               get_jwt_identity
+from flask_jwt_extended import create_access_token, create_refresh_token, \
+                               get_jwt_identity, jwt_refresh_token_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.models.account import UserModel
