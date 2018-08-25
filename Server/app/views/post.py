@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, request, redirect, url_for
+from flask import Blueprint, Response, abort, request
 from flask_restful import Api
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
@@ -26,7 +26,7 @@ class HandleRequests(BaseResource):
             'author': post.author,
             'content': post.content,
             'comments': post.comments,
-            'timestamp': str(post.timestamp)
+            'timestamp': post.timestamp
         } for post in all_post], 200) if user or all_post else abort(406)
 
     @jwt_required
@@ -47,19 +47,16 @@ class HandleRequests(BaseResource):
             title=title,
             author=user.name,
             content=content,
-            timestamp=str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            timestamp=datetime.now()
         ).save()
-
-        return '', 201
+        return Response('', 201)
 
 
 @api.resource('/post/<obj_id>')
 class PostObject(BaseResource):
     @jwt_required
     def get(self, obj_id):
-
         post = PostModel.objects(id=obj_id).first()
-
         self.check_is_exist(post)
 
         return self.unicode_safe_json_dumps({
@@ -67,5 +64,17 @@ class PostObject(BaseResource):
             'author': post.author,
             'content': post.content,
             'comments': post.comments,
-            'timestamp': str(post.timestamp)
+            'timestamp': post.timestamp
         }, 200)
+
+    @jwt_required
+    def post(self, obj_id):
+        post = PostModel.objects(id=obj_id).first()
+        self.check_is_exist(post)
+        comment = post.comments
+
+        comment.append(request.json['comment'])
+        post.save()
+
+        return Response(''), 201
+
