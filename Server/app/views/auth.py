@@ -24,7 +24,7 @@ class Signup(BaseResource):
         pw = payload['pw']
         pw_re = payload['pw_re']
         name = payload['name']
-        uuid = payload['uuid']
+        email = payload['email']
 
         if UserModel.objects(id=id).first():
             return self.unicode_safe_json_dumps({
@@ -41,9 +41,8 @@ class Signup(BaseResource):
                 id=id,
                 pw=hashed_pw,
                 name=name,
-                uuid=uuid
+                email=email
             ).save()
-
         except TypeError:
             abort(400)
 
