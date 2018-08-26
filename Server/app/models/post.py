@@ -27,6 +27,10 @@ class PostModel(Document):
         EmbeddedDocumentField(CommentModel),
     )
 
+    tags = ListField(
+        default=None
+    )
+
     timestamp = DateTimeField()
     # Post 올라온 시간
 
