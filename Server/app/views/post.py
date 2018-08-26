@@ -23,33 +23,18 @@ class HandleRequests(BaseResource):
         if user is None or all_post is None:
             abort(406)
 
-        posts = []
-
-        for post in all_post:
-            comments = []
-
-            for data in post.comments:
-                name = str(data['name'])
-                comment = str(data['comment'])
-
-                one_comment = {
-                    "name": name,
-                    "comment": comment
-                }
-                comments.append(one_comment)
-
-            one_post = {
-                'obj_id': str(post.id),
-                'title': post.title,
-                'author': post.author,
-                'content': post.content,
-                'comments': comments,
-                'tags': post.tags,
-                'timestamp': str(post.timestamp)
-            }
-            posts.append(one_post)
-
-        return self.unicode_safe_json_dumps(posts)
+        return self.unicode_safe_json_dumps([{
+            'obj_id': str(post.id),
+            'title': post.title,
+            'author': post.author,
+            'content': post.content,
+            'comments': [{
+                "name": data.name,
+                "comment": data.comment
+            } for data in post.comments],
+            'tags': post.tags,
+            'timestamp': str(post.timestamp)
+        } for post in all_post], 200)
 
     @jwt_required
     def post(self):
