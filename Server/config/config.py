@@ -7,7 +7,7 @@ class Config:
 
     HOST = socket.gethostbyname(socket.gethostname())
     PORT = 80
-    DEBUG = False
+    DEBUG = True
 
     RUN_SETTINGS = {
         "host": HOST,
