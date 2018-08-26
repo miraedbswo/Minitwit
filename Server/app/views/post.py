@@ -6,7 +6,7 @@ from datetime import datetime
 
 from app.views import BaseResource
 from app.models.account import UserModel
-from app.models.post import PostModel
+from app.models.post import CommentModel, PostModel
 
 blueprint = Blueprint(__name__, __name__)
 api = Api(blueprint)
@@ -26,7 +26,7 @@ class HandleRequests(BaseResource):
             'author': post.author,
             'content': post.content,
             'comments': post.comments,
-            'timestamp': post.timestamp
+            'timestamp': str(post.timestamp)
         } for post in all_post], 200) if user or all_post else abort(406)
 
     @jwt_required
@@ -59,22 +59,41 @@ class PostObject(BaseResource):
         post = PostModel.objects(id=obj_id).first()
         self.check_is_exist(post)
 
+        comment = post.comments
+        comments = []
+
+        for data in comment:
+            name = str(data['name'])
+            comment = str(data['comment'])
+
+            one_comment = {
+                "name": name,
+                "comment": comment
+            }
+            comments.append(one_comment)
+
         return self.unicode_safe_json_dumps({
             'title': post.title,
             'author': post.author,
             'content': post.content,
-            'comments': post.comments,
-            'timestamp': post.timestamp
+            'comments': comments,
+            'timestamp': str(post.timestamp)
         }, 200)
 
     @jwt_required
     def post(self, obj_id):
         post = PostModel.objects(id=obj_id).first()
         self.check_is_exist(post)
-        comment = post.comments
 
-        comment.append(request.json['comment'])
+        user = UserModel.objects(id=get_jwt_identity()).first()
+
+        comment = CommentModel(
+            name=user.name,
+            comment=request.json['comment'],
+        )
+
+        post.comments.append(comment)
         post.save()
 
-        return Response(''), 201
+        return '', 201
 
