@@ -72,25 +72,15 @@ class PostObject(BaseResource):
         post = PostModel.objects(id=obj_id).first()
         self.check_is_exist(post)
 
-        comment = post.comments
-        comments = []
-
-        for data in comment:
-            name = str(data['name'])
-            comment = str(data['comment'])
-
-            one_comment = {
-                "name": name,
-                "comment": comment
-            }
-            comments.append(one_comment)
-
         return self.unicode_safe_json_dumps({
-            'obj_id': obj_id,
+            'obj_id': str(post.id),
             'title': post.title,
             'author': post.author,
             'content': post.content,
-            'comments': comments,
+            'comments': [{
+                "name": data.name,
+                "comment": data.comment
+            } for data in post.comments],
             'tags': post.tags,
             'timestamp': str(post.timestamp)
         }, 200)
