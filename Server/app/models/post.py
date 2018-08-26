@@ -2,7 +2,11 @@ from mongoengine import *
 
 
 class CommentModel(EmbeddedDocument):
-    comment = StringField()
+    name = StringField()
+
+    comment = StringField(
+        default=[]
+    )
 
 
 class PostModel(Document):
@@ -19,9 +23,8 @@ class PostModel(Document):
     )
     # 작성할 글
 
-    comments = EmbeddedDocumentListField(
-        CommentModel,
-        null=True
+    comments = ListField(
+        EmbeddedDocumentField(CommentModel),
     )
 
     timestamp = DateTimeField()
