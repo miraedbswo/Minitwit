@@ -18,16 +18,38 @@ class HandleRequests(BaseResource):
     def get(self):
 
         user = UserModel.objects(id=get_jwt_identity()).first()
-        all_post = PostModel.objects(author=user.name).all()
+        all_post = PostModel.objects().all()
 
-        return self.unicode_safe_json_dumps([{
-            'obj_id': str(post.id),
-            'title': post.title,
-            'author': post.author,
-            'content': post.content,
-            'comments': post.comments,
-            'timestamp': str(post.timestamp)
-        } for post in all_post], 200) if user or all_post else abort(406)
+        if user is None or all_post is None:
+            abort(406)
+
+        posts = []
+
+        for post in all_post:
+            comments = []
+
+            for data in post.comments:
+                name = str(data['name'])
+                comment = str(data['comment'])
+
+                one_comment = {
+                    "name": name,
+                    "comment": comment
+                }
+                comments.append(one_comment)
+
+            one_post = {
+                'obj_id': str(post.id),
+                'title': post.title,
+                'author': post.author,
+                'content': post.content,
+                'comments': comments,
+                'tags': post.tags,
+                'timestamp': str(post.timestamp)
+            }
+            posts.append(one_post)
+
+        return self.unicode_safe_json_dumps(posts)
 
     @jwt_required
     def post(self):
@@ -39,16 +61,22 @@ class HandleRequests(BaseResource):
         title = payload["title"]
         content = payload["content"]
 
+        try:
+            tags = payload['tags']
+        except KeyError:
+            tags = []
+
         user = UserModel.objects(id=get_jwt_identity()).first()
-        if user is None:
-            abort(406)
+        self.check_is_exist(user)
 
         PostModel(
             title=title,
             author=user.name,
             content=content,
-            timestamp=datetime.now()
+            timestamp=datetime.now(),
+            tags=tags
         ).save()
+
         return Response('', 201)
 
 
@@ -73,10 +101,12 @@ class PostObject(BaseResource):
             comments.append(one_comment)
 
         return self.unicode_safe_json_dumps({
+            'obj_id': obj_id,
             'title': post.title,
             'author': post.author,
             'content': post.content,
             'comments': comments,
+            'tags': post.tags,
             'timestamp': str(post.timestamp)
         }, 200)
 
