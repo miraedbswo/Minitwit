@@ -102,3 +102,6 @@ class PostObject(BaseResource):
 
         return '', 201
 
+    @jwt_required
+    def delete(self, obj_id):
+        pass
