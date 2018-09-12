@@ -1,40 +1,44 @@
 from mongoengine import *
 
+from datetime import datetime
+
+from app.models import BaseModel
+from app.models.account import UserModel
+
 
 class CommentModel(EmbeddedDocument):
-    name = StringField()
+    user = ReferenceField(
+        document_type=UserModel
+    )
 
-    comment = StringField(
+    comment = ListField(
         default=[]
     )
 
 
-class PostModel(Document):
+class PostModel(BaseModel):
     title = StringField(
         max_length=100,
     )
     # Post의 제목
 
-    author = StringField()
-    # 작성자
+    user = ReferenceField(
+        document_type=UserModel
+    )
 
     content = StringField(
         null=False
     )
-    # 작성할 글
 
-    comments = ListField(
-        EmbeddedDocumentField(CommentModel),
+    comments = EmbeddedDocumentListField(
+        document_type=CommentModel
     )
 
     tags = ListField(
         default=None
     )
 
-    timestamp = DateTimeField()
-    # Post 올라온 시간
-
-    meta = {
-        'allow_inheritance': True
-    }
+    timestamp = DateTimeField(
+        default=datetime.now()
+    )
 
