@@ -21,7 +21,8 @@ Minitwit
 - local or AWS
 
 ## Api
-- blueprint + Flask-restful
+- REST API
+  - blueprint + Flask-restful
 
 ### 1. 로그인 및 회원가입 구현 & 여러 account 기능들 구현
   - signup
