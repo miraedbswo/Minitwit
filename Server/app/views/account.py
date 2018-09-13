@@ -20,7 +20,7 @@ class Mypage(BaseResource):
         self.check_is_exist(user)
 
         return self.unicode_safe_json_dumps({
-            "name": user.name,
+            "name": user.name
         })
 
 
@@ -28,14 +28,12 @@ class Mypage(BaseResource):
 class ChangePW(BaseResource):
     @jwt_required
     def post(self):
-
         payload = request.json
 
         current_pw = payload['current_pw']
         new_pw = payload['new_pw']
 
         user = UserModel.objects(id=get_jwt_identity()).first()
-
         self.check_is_exist(user)
 
         if not check_password_hash(user.pw, current_pw):
