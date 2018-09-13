@@ -22,12 +22,12 @@ class PostModel(BaseModel):
     )
     # Post의 제목
 
-    user = ReferenceField(
+    owner = ReferenceField(
         document_type=UserModel
     )
 
     content = StringField(
-        null=False
+        required=True
     )
 
     comments = EmbeddedDocumentListField(
@@ -39,6 +39,6 @@ class PostModel(BaseModel):
     )
 
     timestamp = DateTimeField(
-        default=datetime.now()
+        default=datetime.now
     )
 
