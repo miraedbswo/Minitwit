@@ -38,3 +38,15 @@ class TokenModel(BaseModel):
         return create_refresh_token(
             str(cls._create_token(owner))
         )
+
+
+class AccessTokenModel(TokenModel):
+    meta = {
+        'collection': 'access_token'
+    }
+
+
+class RefreshTokenModel(TokenModel):
+    meta = {
+        'collection': 'refresh_token'
+    }
