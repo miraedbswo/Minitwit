@@ -1,9 +1,9 @@
 from mongoengine import *
+
 from datetime import datetime
 
 
 class UserModel(Document):
-
     id = StringField(
         primary_key=True
     )
@@ -23,10 +23,6 @@ class UserModel(Document):
 
     signup_time = DateTimeField(
         default=datetime.now
-    )
-
-    is_admin = BooleanField(
-        default=False
     )
 
     meta = {
