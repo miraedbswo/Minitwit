@@ -1,7 +1,53 @@
-from flask import abort, Response
-from flask_restful import Resource
-
+from functools import wraps
+from uuid import UUID
 import json
+
+from flask import Response, abort, g, request
+from flask_restful import Resource
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from app.models.token import AccessTokenModel
+
+
+def auth_required(model):
+    def decorator(func):
+        @wraps(func)
+        @jwt_required
+        def wrapper(*args, **kwargs):
+            token = AccessTokenModel.objects(
+                identity=UUID(get_jwt_identity())
+            ).first()
+            account = token.key.owner
+
+            if not token:
+                abort(401)
+
+            if isinstance(account, model):
+                g.account = account
+            else:
+                abort(403)
+
+            return func(*args, *kwargs)
+        return wrapper
+    return decorator
+
+
+def json_required(required_keys: dict):
+    def decorator(func):
+        if func.__name__ == 'get':
+            abort(405)
+
+        if not request.is_json:
+            abort(406)
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for key, typ in required_keys.items():
+                if key not in request.json or type(request.json[key]) is not typ:
+                    abort(400)
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
 
 
 class BaseResource(Resource):
@@ -34,7 +80,6 @@ class Router:
 
     :param app: A flask application
     """
-
     def __init__(self, app=None):
         if app is not None:
             self.init_app(app)
@@ -46,3 +91,5 @@ class Router:
         app.register_blueprint(post.api.blueprint)
         from app.views import account
         app.register_blueprint(account.api.blueprint)
+
+
