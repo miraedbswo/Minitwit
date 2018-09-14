@@ -23,17 +23,11 @@ class Signup(BaseResource):
 
         id = payload['id']
         pw = payload['pw']
-        pw_re = payload['pw_re']
         name = payload['name']
         email = payload['email']
 
         if UserModel.objects(id=id).first():
-            return self.unicode_safe_json_dumps({
-                "msg": '중복된 id 값입니다.'
-            }, 409)
-
-        if pw != pw_re:
-            abort(406)
+            abort(409)
 
         try:
             hashed_pw = generate_password_hash(pw)
@@ -59,22 +53,22 @@ class Login(BaseResource):
         user_pw = payload['pw']
 
         user = UserModel.objects(id=user_id).first()
-
         self.check_is_exist(user)
+
+        if check_password_hash(user.pw, user_pw):
+            abort(406)
 
         return {
             'access_token': AccessTokenModel.create_access_token(user),
             'refresh_token': RefreshTokenModel.create_refresh_token(user)
-        }, 200 if check_password_hash(user.pw, user_pw) else abort(406)
+        }, 200
 
 
 @api.resource('/refresh')
 class GetRefreshToken(BaseResource):
     @jwt_refresh_token_required
     def get(self):
-
         user = UserModel.objects(id=get_jwt_identity()).first()
-
         self.check_is_exist(user)
 
         return {
