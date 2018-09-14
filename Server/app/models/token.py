@@ -1,11 +1,17 @@
+import uuid
+
 from mongoengine import *
 from flask_jwt_extended import create_access_token, create_refresh_token
 
-from app.models import BaseModel
 from app.models.account import UserModel
 
 
-class TokenModel(BaseModel):
+class TokenModel(Document):
+    meta = {
+        'abstract': True,
+        'allow_inheritance': True
+    }
+
     class Key(EmbeddedDocument):
         owner = ReferenceField(
             document_type=UserModel,
@@ -15,6 +21,10 @@ class TokenModel(BaseModel):
     key = EmbeddedDocumentField(
         document_type=Key,
         primary_key=True
+    )
+
+    identity = UUIDField(
+        default=uuid.uuid4
     )
 
     @classmethod
@@ -30,23 +40,23 @@ class TokenModel(BaseModel):
     @classmethod
     def create_access_token(cls, owner):
         return create_access_token(
-            str(cls._create_token(owner))
+            identity=str(cls._create_token(owner))
         )
 
     @classmethod
     def create_refresh_token(cls, owner):
         return create_refresh_token(
-            str(cls._create_token(owner))
+            identity=str(cls._create_token(owner))
         )
 
 
 class AccessTokenModel(TokenModel):
     meta = {
-        'collection': 'access_token'
+        'collection': "AccessTokenModel"
     }
 
 
 class RefreshTokenModel(TokenModel):
     meta = {
-        'collection': 'refresh_token'
+        'collection': "RefreshTokenModel"
     }
