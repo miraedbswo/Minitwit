@@ -1,36 +1,36 @@
 from functools import wraps
-from uuid import UUID
+# from uuid import UUID
 import json
 
 from flask import Response, abort, g, request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required, get_jwt_identity
+# from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from app.models.token import AccessTokenModel
+# from app.models.token import AccessTokenModel
 
 
-def auth_required(model):
-    def decorator(func):
-        @wraps(func)
-        @jwt_required
-        def wrapper(*args, **kwargs):
-            try:
-                token = AccessTokenModel.objects(
-                    identity=UUID(get_jwt_identity())
-                ).first()
-                account = token.key.owner
-
-                if not token:
-                    abort(401)
-                if not isinstance(account, model):
-                    abort(403)
-
-            except ValueError:
-                abort(422)
-
-            return func(*args, *kwargs)
-        return wrapper
-    return decorator
+# def auth_required(model):
+#     def decorator(func):
+#         @wraps(func)
+#         @jwt_required
+#         def wrapper(*args, **kwargs):
+#             try:
+#                 token = AccessTokenModel.objects(
+#                     identity=UUID(get_jwt_identity())
+#                 ).first()
+#                 account = token.key.owner
+#
+#                 if not token:
+#                     abort(401)
+#                 if not isinstance(account, model):
+#                     abort(403)
+#
+#             except ValueError:
+#                 abort(422)
+#
+#             return func(*args, *kwargs)
+#         return wrapper
+#     return decorator
 
 
 def json_required(required_keys: dict):
@@ -41,8 +41,13 @@ def json_required(required_keys: dict):
                 abort(406)
 
             for key, typ in required_keys.items():
-                if key not in request.json or type(request.json[key]) is not typ:
+                if key not in request.json:
                     abort(400)
+
+                if isinstance(typ, type):
+                    if not isinstance(key, typ):
+                        abort(406)
+
             return func(*args, **kwargs)
         return wrapper
     return decorator
@@ -66,9 +71,10 @@ class BaseResource(Resource):
         )
 
     @classmethod
-    def check_is_exist(cls, data):
-        if data is None:
-            abort(406)
+    def check_is_exist(cls, *args):
+        for data in args:
+            if data:
+                abort(406)
 
 
 class Router:
@@ -82,11 +88,11 @@ class Router:
             self.init_app(app)
 
     def init_app(self, app):
-        from app.views import auth
+        from app.api import auth
         app.register_blueprint(auth.api.blueprint)
-        from app.views import post
+        from app.api import post
         app.register_blueprint(post.api.blueprint)
-        from app.views import account
+        from app.api import account
         app.register_blueprint(account.api.blueprint)
 
 
