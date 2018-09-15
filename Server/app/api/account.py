@@ -3,8 +3,8 @@ from flask_restful import Api
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from app.api import json_required, BaseResource
 from app.models.account import UserModel
-from app.views import BaseResource
 
 
 blueprint = Blueprint(__name__, __name__)
@@ -27,6 +27,7 @@ class Mypage(BaseResource):
 @api.resource('/change-pw')
 class ChangePW(BaseResource):
     @jwt_required
+    @json_required({'current_pw': str, 'new_pw': str})
     def post(self):
         payload = request.json
 
@@ -39,7 +40,7 @@ class ChangePW(BaseResource):
         if not check_password_hash(user.pw, current_pw):
             abort(403)
 
-        if current_pw == new_pw:
+        if check_password_hash(current_pw, new_pw):
             abort(409)
 
         user.update(pw=generate_password_hash(new_pw))
