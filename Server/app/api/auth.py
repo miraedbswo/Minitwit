@@ -5,8 +5,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, \
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.models.account import UserModel
-from app.models.token import AccessTokenModel, RefreshTokenModel
-from app.views import BaseResource
+from app.api import json_required, BaseResource
 
 blueprint = Blueprint(__name__, __name__)
 api = Api(blueprint)
@@ -15,9 +14,7 @@ api.prefix = '/auth'
 
 @api.resource('/signup')
 class Signup(BaseResource):
-    def get(self):
-        return 'hi', 200
-
+    @json_required({'id': str, 'pw': str, 'name': str, 'email': str})
     def post(self):
         payload = request.json
 
@@ -59,8 +56,8 @@ class Login(BaseResource):
             abort(406)
 
         return {
-            'access_token': AccessTokenModel.create_access_token(user),
-            'refresh_token': RefreshTokenModel.create_refresh_token(user)
+            'access_token': create_access_token(user.id),
+            'refresh_token': create_refresh_token(user.id)
         }, 200
 
 
@@ -68,6 +65,7 @@ class Login(BaseResource):
 class GetRefreshToken(BaseResource):
     @jwt_refresh_token_required
     def get(self):
+        user = UserModel.objects(id=get_jwt_identity()).first()
         self.check_is_exist(user)
 
         return {
