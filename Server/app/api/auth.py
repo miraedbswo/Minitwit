@@ -68,7 +68,6 @@ class Login(BaseResource):
 class GetRefreshToken(BaseResource):
     @jwt_refresh_token_required
     def get(self):
-        user = UserModel.objects(id=get_jwt_identity()).first()
         self.check_is_exist(user)
 
         return {

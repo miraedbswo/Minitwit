@@ -14,18 +14,19 @@ def auth_required(model):
         @wraps(func)
         @jwt_required
         def wrapper(*args, **kwargs):
-            token = AccessTokenModel.objects(
-                identity=UUID(get_jwt_identity())
-            ).first()
-            account = token.key.owner
+            try:
+                token = AccessTokenModel.objects(
+                    identity=UUID(get_jwt_identity())
+                ).first()
+                account = token.key.owner
 
-            if not token:
-                abort(401)
+                if not token:
+                    abort(401)
+                if not isinstance(account, model):
+                    abort(403)
 
-            if isinstance(account, model):
-                g.account = account
-            else:
-                abort(403)
+            except ValueError:
+                abort(422)
 
             return func(*args, *kwargs)
         return wrapper
@@ -34,14 +35,11 @@ def auth_required(model):
 
 def json_required(required_keys: dict):
     def decorator(func):
-        if func.__name__ == 'get':
-            abort(405)
-
-        if not request.is_json:
-            abort(406)
-
         @wraps(func)
         def wrapper(*args, **kwargs):
+            if not request.is_json:
+                abort(406)
+
             for key, typ in required_keys.items():
                 if key not in request.json or type(request.json[key]) is not typ:
                     abort(400)
@@ -51,7 +49,6 @@ def json_required(required_keys: dict):
 
 
 class BaseResource(Resource):
-
     @classmethod
     def unicode_safe_json_dumps(cls, data, status_code=200):
         """
