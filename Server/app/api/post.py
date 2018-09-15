@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from datetime import datetime
 
-from app.views import BaseResource
+from app.api import BaseResource
 from app.models.account import UserModel
 from app.models.post import CommentModel, PostModel
 
@@ -104,4 +104,9 @@ class PostObject(BaseResource):
 
     @jwt_required
     def delete(self, obj_id):
-        pass
+        post = PostModel.objects(id=obj_id).first()
+
+        self.check_is_exist(post)
+        post.delete()
+
+        return '', 200
