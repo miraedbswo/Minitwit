@@ -9,11 +9,11 @@ from app.models.account import UserModel
 
 blueprint = Blueprint(__name__, __name__)
 api = Api(blueprint)
-api.prefix = '/user'
+api.prefix = '/<my_name>'
 
 
-@api.resource('/<my_name>')
-class Mypage(BaseResource):
+@api.resource('')
+class ShowProfile(BaseResource):
     @jwt_required
     def get(self, my_name):
         user = UserModel.objects(name=my_name).first()
