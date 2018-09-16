@@ -4,27 +4,18 @@ from datetime import datetime
 
 
 class UserModel(Document):
-    id = StringField(
-        primary_key=True
-    )
+    id = StringField(primary_key=True)
+    pw = StringField(min_length=8, required=True)
+    name = StringField(required=True)
+    email = StringField(required=True)
+    signup_time = DateTimeField(default=datetime.now)
 
-    pw = StringField(
-        min_length=8,
-        required=True
-    )
+    meta = {'allow_inheritance': True}
 
-    name = StringField(
-        required=True
-    )
 
-    email = StringField(
-        required=True
-    )
+class FollowModel(Document):
+    follower = ReferenceField(UserModel)
+    followee = ReferenceField(UserModel)
 
-    signup_time = DateTimeField(
-        default=datetime.now
-    )
+    follow_time = DateTimeField(default=datetime.now())
 
-    meta = {
-        'allow_inheritance': True
-    }
