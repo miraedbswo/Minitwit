@@ -1,3 +1,4 @@
+from datetime import timedelta
 import socket
 import os
 
@@ -14,6 +15,9 @@ class Config:
         "port": PORT,
         "debug": DEBUG
     }
+
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=3)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
     MONGODB_SETTINGS = {
         'db': SERVICE_NAME,
