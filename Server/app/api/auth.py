@@ -70,5 +70,4 @@ class GetRefreshToken(BaseResource):
 
         return {
             'access_token': create_access_token(identity=user.id),
-            'refresh_token': create_refresh_token(identity=user.id)
         }
