@@ -22,7 +22,7 @@ class PostModel(BaseModel):
     )
     # Post의 제목
 
-    owner = ReferenceField(
+    author = ReferenceField(
         document_type=UserModel
     )
 
