@@ -4,10 +4,11 @@ import json
 
 from flask import Response, abort, g, request
 from flask_restful import Resource
-# from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from app.models.account import UserModel
 
 # from app.models.token import AccessTokenModel
-
 
 # def auth_required(model):
 #     def decorator(func):
@@ -28,9 +29,21 @@ from flask_restful import Resource
 #             except ValueError:
 #                 abort(422)
 #
-#             return func(*args, *kwargs)
+#             return func(*args, **kwargs)
 #         return wrapper
 #     return decorator
+
+
+def get_user_inform(fn):
+    @wraps(fn)
+    @jwt_required
+    def wrapper(*args, **kwargs):
+        user = UserModel.objects(id=get_jwt_identity()).first()
+        if not user:
+            abort(406)
+        g.user = user
+        return fn(*args, **kwargs)
+    return wrapper
 
 
 def json_required(required_keys: dict):
