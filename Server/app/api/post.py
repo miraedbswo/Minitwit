@@ -1,11 +1,7 @@
 from flask import Blueprint, Response, abort, request
 from flask_restful import Api
-from flask_jwt_extended import get_jwt_identity, jwt_required
 
-from datetime import datetime
-
-from app.api import BaseResource
-from app.models.account import UserModel
+from app.api import BaseResource, get_user_inform
 from app.models.post import CommentModel, PostModel
 
 blueprint = Blueprint(__name__, __name__)
@@ -14,14 +10,10 @@ api = Api(blueprint)
 
 @api.resource('/post')
 class HandleRequests(BaseResource):
-    @jwt_required
+    @get_user_inform
     def get(self):
-
-        user = UserModel.objects(id=get_jwt_identity()).first()
         all_post = PostModel.objects().all()
-
-        if user is None or all_post is None:
-            abort(406)
+        self.check_is_exist(all_post)
 
         return self.unicode_safe_json_dumps([{
             'obj_id': str(post.id),
@@ -36,7 +28,7 @@ class HandleRequests(BaseResource):
             'timestamp': str(post.timestamp)
         } for post in all_post], 200)
 
-    @jwt_required
+    @get_user_inform
     def post(self):
         payload = request.json
 
@@ -51,14 +43,10 @@ class HandleRequests(BaseResource):
         except KeyError:
             tags = []
 
-        user = UserModel.objects(id=get_jwt_identity()).first()
-        self.check_is_exist(user)
-
         PostModel(
             title=title,
-            author=user.name,
+            author=g.user,
             content=content,
-            timestamp=datetime.now(),
             tags=tags
         ).save()
 
@@ -67,7 +55,7 @@ class HandleRequests(BaseResource):
 
 @api.resource('/post/<obj_id>')
 class PostObject(BaseResource):
-    @jwt_required
+    @get_user_inform
     def get(self, obj_id):
         post = PostModel.objects(id=obj_id).first()
         self.check_is_exist(post)
@@ -85,15 +73,13 @@ class PostObject(BaseResource):
             'timestamp': str(post.timestamp)
         }, 200)
 
-    @jwt_required
+    @get_user_inform
     def post(self, obj_id):
         post = PostModel.objects(id=obj_id).first()
         self.check_is_exist(post)
 
-        user = UserModel.objects(id=get_jwt_identity()).first()
-
         comment = CommentModel(
-            name=user.name,
+            name=g.user.name,
             comment=request.json['comment'],
         )
 
@@ -102,7 +88,7 @@ class PostObject(BaseResource):
 
         return '', 201
 
-    @jwt_required
+    @get_user_inform
     def delete(self, obj_id):
         post = PostModel.objects(id=obj_id).first()
 
