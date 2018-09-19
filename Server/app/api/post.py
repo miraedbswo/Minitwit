@@ -1,4 +1,4 @@
-from flask import Blueprint, Response, abort, request
+from flask import Blueprint, Response, abort, request, g
 from flask_restful import Api
 
 from app.api import BaseResource, get_user_inform
@@ -13,12 +13,13 @@ class HandleRequests(BaseResource):
     @get_user_inform
     def get(self):
         all_post = PostModel.objects().all()
-        self.check_is_exist(all_post)
+        if not all_post:
+            return Response('', 204)
 
         return self.unicode_safe_json_dumps([{
             'obj_id': str(post.id),
             'title': post.title,
-            'author': post.author,
+            'author': post.author.nickname,
             'content': post.content,
             'comments': [{
                 "name": data.name,

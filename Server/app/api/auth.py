@@ -14,25 +14,27 @@ api.prefix = '/auth'
 
 @api.resource('/signup')
 class Signup(BaseResource):
-    @json_required({'id': str, 'pw': str, 'name': str, 'email': str})
+    @json_required({'id': str, 'pw': str, 'name': str, 'nickname': str, 'email': str})
     def post(self):
         payload = request.json
 
         id = payload['id']
         pw = payload['pw']
         name = payload['name']
+        nickname = payload['nickname']
         email = payload['email']
 
         if UserModel.objects(id=id).first():
             abort(409)
 
         try:
-            hashed_pw = generate_password_hash(pw)
+            pw_hashed = generate_password_hash(pw)
 
             UserModel(
                 id=id,
-                pw=hashed_pw,
+                pw_hashed=pw_hashed,
                 name=name,
+                nickname=nickname,
                 email=email
             ).save()
         except TypeError:
@@ -43,6 +45,7 @@ class Signup(BaseResource):
 
 @api.resource('/login')
 class Login(BaseResource):
+    @json_required({'id': str, 'pw': str})
     def post(self):
         payload = request.json
 
@@ -52,7 +55,7 @@ class Login(BaseResource):
         user = UserModel.objects(id=user_id).first()
         self.check_is_exist(user)
 
-        if check_password_hash(user.pw, user_pw):
+        if not check_password_hash(user.pw_hashed, user_pw):
             abort(406)
 
         return {
