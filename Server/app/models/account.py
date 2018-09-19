@@ -8,12 +8,16 @@ class UserModel(Document):
         primary_key=True
     )
 
-    pw = StringField(
+    pw_hashed = StringField(
         min_length=8,
         required=True
     )
 
     name = StringField(
+        required=True
+    )
+
+    nickname = StringField(
         required=True
     )
 
@@ -35,12 +39,4 @@ class UserModel(Document):
 
     meta = {'allow_inheritance': True}
 
-
-class FollowModel(Document):
-    follower = ReferenceField(UserModel)
-    followee = ReferenceField(UserModel)
-
-    follow_time = DateTimeField(
-        default=datetime.now
-    )
 

@@ -35,7 +35,7 @@ class PostModel(BaseModel):
     )
 
     tags = ListField(
-        default=None
+        StringField()
     )
 
     timestamp = DateTimeField(
