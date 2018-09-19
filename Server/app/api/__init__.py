@@ -40,7 +40,7 @@ def get_user_inform(fn):
     def wrapper(*args, **kwargs):
         user = UserModel.objects(id=get_jwt_identity()).first()
         if not user:
-            abort(406)
+            abort(422)
         g.user = user
         return fn(*args, **kwargs)
     return wrapper
@@ -55,11 +55,14 @@ def json_required(required_keys: dict):
 
             for key, typ in required_keys.items():
                 if key not in request.json:
-                    abort(400)
+                    return Response('{} key is required.'.format("'" + key + "'"), 400)
 
                 if isinstance(typ, type):
-                    if not isinstance(key, typ):
-                        abort(406)
+                    if not isinstance(request.json[key], typ):
+                        return Response('{} key only accepts {} values.'
+                                        .format("'" + str(key) + "'", str(typ)[8:-2]), 406)
+                else:
+                    abort(400)
 
             return func(*args, **kwargs)
         return wrapper
@@ -86,7 +89,7 @@ class BaseResource(Resource):
     @classmethod
     def check_is_exist(cls, *args):
         for data in args:
-            if data:
+            if not data:
                 abort(406)
 
 
