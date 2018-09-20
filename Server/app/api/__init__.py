@@ -104,11 +104,11 @@ class Router:
             self.init_app(app)
 
     def init_app(self, app):
-        from app.api import auth
-        app.register_blueprint(auth.api.blueprint)
-        from app.api import post
-        app.register_blueprint(post.api.blueprint)
         from app.api import account
         app.register_blueprint(account.api.blueprint)
-
-
+        from app.api import auth
+        app.register_blueprint(auth.api.blueprint)
+        from app.api import follow
+        app.register_blueprint(follow.api.blueprint)
+        from app.api import post
+        app.register_blueprint(post.api.blueprint)
