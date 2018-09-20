@@ -16,7 +16,7 @@ class Config:
         "debug": DEBUG
     }
 
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=3)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
     MONGODB_SETTINGS = {
