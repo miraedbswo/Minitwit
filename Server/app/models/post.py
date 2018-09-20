@@ -11,8 +11,8 @@ class CommentModel(EmbeddedDocument):
         document_type=UserModel
     )
 
-    comment = ListField(
-        default=[]
+    comment = StringField(
+        required=True
     )
 
 
