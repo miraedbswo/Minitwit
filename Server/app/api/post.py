@@ -64,10 +64,10 @@ class PostObject(BaseResource):
         return self.unicode_safe_json_dumps({
             'obj_id': str(post.id),
             'title': post.title,
-            'author': post.author,
+            'author': post.author.nickname,
             'content': post.content,
             'comments': [{
-                "name": data.name,
+                "user": data.user.nickname,
                 "comment": data.comment
             } for data in post.comments],
             'tags': post.tags,
@@ -80,14 +80,14 @@ class PostObject(BaseResource):
         self.check_is_exist(post)
 
         comment = CommentModel(
-            name=g.user.name,
+            user=g.user,
             comment=request.json['comment'],
         )
 
         post.comments.append(comment)
         post.save()
 
-        return '', 201
+        return Response('', 201)
 
     @get_user_inform
     def delete(self, obj_id):
@@ -96,4 +96,4 @@ class PostObject(BaseResource):
         self.check_is_exist(post)
         post.delete()
 
-        return '', 200
+        return Response('', 200)
