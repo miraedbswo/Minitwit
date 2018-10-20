@@ -19,6 +19,7 @@ class Follow(BaseResource):
 
         followers = FollowModel.objects(followee=owner).all()
         following = FollowModel.objects(follower=owner).all()
+
         if not followers or following:
             return Response('', 204)
 
