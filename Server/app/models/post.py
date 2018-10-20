@@ -15,6 +15,11 @@ class CommentModel(EmbeddedDocument):
         required=True
     )
 
+    comment_num = IntField(
+        required=True,
+        unique=True
+    )
+
 
 class PostModel(BaseModel):
     title = StringField(
@@ -31,7 +36,7 @@ class PostModel(BaseModel):
     )
 
     comments = EmbeddedDocumentListField(
-        document_type=CommentModel
+        CommentModel
     )
 
     tags = ListField(

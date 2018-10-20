@@ -21,3 +21,5 @@ class FollowModel(Document):
     follow_time = DateTimeField(
         default=datetime.now
     )
+
+

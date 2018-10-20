@@ -1,15 +1,10 @@
-from flask import Blueprint, Response, abort, request, g
-from flask_restful import Api
+from flask import Response, abort, request, g
 
-from app.api import BaseResource, get_user_inform
-from app.models.post import CommentModel, PostModel
-
-blueprint = Blueprint(__name__, __name__)
-api = Api(blueprint)
+from app.api import BaseResource, get_user_inform, json_required
+from app.models.post import PostModel
 
 
-@api.resource('/post')
-class HandleRequests(BaseResource):
+class ShowAllPostView(BaseResource):
     @get_user_inform
     def get(self):
         all_post = PostModel.objects().all()
@@ -29,7 +24,10 @@ class HandleRequests(BaseResource):
             'timestamp': str(post.timestamp)
         } for post in all_post], 200)
 
+
+class WritePostView(BaseResource):
     @get_user_inform
+    @json_required({'title': str, 'content': str})
     def post(self):
         payload = request.json
 
@@ -54,8 +52,7 @@ class HandleRequests(BaseResource):
         return Response('', 201)
 
 
-@api.resource('/post/<obj_id>')
-class PostObject(BaseResource):
+class OnePostView(BaseResource):
     @get_user_inform
     def get(self, obj_id):
         post = PostModel.objects(id=obj_id).first()
@@ -75,25 +72,10 @@ class PostObject(BaseResource):
         }, 200)
 
     @get_user_inform
-    def post(self, obj_id):
-        post = PostModel.objects(id=obj_id).first()
-        self.check_is_exist(post)
-
-        comment = CommentModel(
-            user=g.user,
-            comment=request.json['comment'],
-        )
-
-        post.comments.append(comment)
-        post.save()
-
-        return Response('', 201)
-
-    @get_user_inform
     def delete(self, obj_id):
         post = PostModel.objects(id=obj_id).first()
-
         self.check_is_exist(post)
         post.delete()
 
         return Response('', 200)
+
