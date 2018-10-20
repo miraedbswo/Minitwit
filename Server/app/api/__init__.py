@@ -96,19 +96,19 @@ class BaseResource(Resource):
 class Router:
     """
     기능 별 blueprint 들을 모아서 register 해주는 class 구현.
-
     :param app: A flask application
     """
     def __init__(self, app=None):
         if app is not None:
-            self.init_app(app)
+            self.register_blueprint(app)
 
-    def init_app(self, app):
+    def register_blueprint(self, app):
         from app.api import account
         app.register_blueprint(account.api.blueprint)
-        from app.api import auth
-        app.register_blueprint(auth.api.blueprint)
-        from app.api import follow
+
+        # 임시 방편
+        from app.api.account import follow
         app.register_blueprint(follow.api.blueprint)
+
         from app.api import post
         app.register_blueprint(post.api.blueprint)
