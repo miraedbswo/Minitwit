@@ -9,8 +9,8 @@ api.prefix = '/post'
 
 from .post import ShowAllPostView, WritePostView, OnePostView
 api.add_resource(ShowAllPostView, '')
-api.add_resource(WritePostView, '')
+api.add_resource(WritePostView, '/write')
 api.add_resource(OnePostView, '/<obj_id>')
 
 from .comment import CommentView
-api.add_resource(CommentView, '/<obj_id>/comment/<comment_num>')
+api.add_resource(CommentView, '/comment/<obj_id>')

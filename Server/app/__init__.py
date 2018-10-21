@@ -15,7 +15,7 @@ def create_app(*config_obj):
     # db.init_app(app_)
     # app_.config['db'] = db
 
-    Router().init_app(app_)
+    Router(app_)
 
     JWTManager().init_app(app_)
 

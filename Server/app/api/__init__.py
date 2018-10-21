@@ -106,9 +106,5 @@ class Router:
         from app.api import account
         app.register_blueprint(account.api.blueprint)
 
-        # 임시 방편
-        from app.api.account import follow
-        app.register_blueprint(follow.api.blueprint)
-
         from app.api import post
         app.register_blueprint(post.api.blueprint)
