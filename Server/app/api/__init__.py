@@ -89,6 +89,8 @@ class BaseResource(Resource):
     @classmethod
     def check_is_exist(cls, *args):
         for data in args:
+            if data == 0:
+                continue
             if not data:
                 abort(406)
 
