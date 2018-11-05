@@ -6,7 +6,7 @@ import os
 class Config:
     SERVICE_NAME = 'Minitwit'
 
-    HOST = socket.gethostbyname(socket.gethostname())
+    HOST = '0.0.0.0'
     PORT = 80
     DEBUG = True
 
