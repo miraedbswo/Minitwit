@@ -38,5 +38,3 @@ class UserModel(Document):
     )
 
     meta = {'allow_inheritance': True}
-
-

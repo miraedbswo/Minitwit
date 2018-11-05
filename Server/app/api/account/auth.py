@@ -2,12 +2,15 @@ from flask import Response, abort, request
 from flask_jwt_extended import create_access_token, create_refresh_token, \
                                get_jwt_identity, jwt_refresh_token_required
 from werkzeug.security import check_password_hash, generate_password_hash
+from flasgger import swag_from
 
 from app.models.account import UserModel
 from app.api import json_required, BaseResource
+from app.docs.account.auth import REGISTER_POST, LOGIN_POST
 
 
 class RegisterView(BaseResource):
+    @swag_from(REGISTER_POST)
     @json_required({'id': str, 'pw': str, 'name': str, 'nickname': str, 'email': str})
     def post(self):
         payload = request.json
@@ -38,6 +41,7 @@ class RegisterView(BaseResource):
 
 
 class LoginView(BaseResource):
+    @swag_from(LOGIN_POST)
     @json_required({'id': str, 'pw': str})
     def post(self):
         payload = request.json

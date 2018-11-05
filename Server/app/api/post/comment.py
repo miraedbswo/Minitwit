@@ -1,10 +1,13 @@
 from flask import Response, request, g
+from flasgger import swag_from
 
 from app.api import BaseResource, get_user_inform, json_required
 from app.models.post import CommentModel, PostModel
+from app.docs.post.comment import WRITE_COMMENT_POST, ONE_COMMENT_DELETE
 
 
 class CommentView(BaseResource):
+    @swag_from(WRITE_COMMENT_POST)
     @get_user_inform
     @json_required({'comment': str})
     def post(self, obj_id):
@@ -24,6 +27,7 @@ class CommentView(BaseResource):
 
         return Response('', 201)
 
+    @swag_from(ONE_COMMENT_DELETE)
     @get_user_inform
     def delete(self, obj_id):
         post = PostModel.objects(id=obj_id).first()

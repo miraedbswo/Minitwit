@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from flasgger import Swagger
 from mongoengine import connect
 
 from app.api import Router
@@ -18,6 +19,7 @@ def create_app(*config_obj):
     Router(app_)
 
     JWTManager().init_app(app_)
+    Swagger(template=app_.config['SWAGGER_TEMPLATE']).init_app(app_)
 
     return app_
 

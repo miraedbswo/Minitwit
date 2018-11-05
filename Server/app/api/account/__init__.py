@@ -13,8 +13,9 @@ api.add_resource(RegisterView, '/register')
 api.add_resource(LoginView, '/login')
 api.add_resource(GetRefreshTokenView, '/refresh')
 
-from .inform import ChangePWView
+from .inform import ChangePWView, ChangeNicknameView
 api.add_resource(ChangePWView, '/pw')
+api.add_resource(ChangeNicknameView)
 
 from .follow import FollowView
 api.add_resource(FollowView, '/follow/<nickname>')

@@ -30,6 +30,7 @@ class Config:
     SWAGGER = {
         'title': SERVICE_NAME,
         'uiversion': 3,
+        'specs_route': '/docs',
 
         'info': {
             'title': SERVICE_NAME + ' API',
