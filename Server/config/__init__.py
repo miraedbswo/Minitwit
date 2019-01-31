@@ -34,8 +34,7 @@ class Config:
 
         'info': {
             'title': SERVICE_NAME + ' API',
-            'version': '1.0',
-            'description': 'test'
+            'version': '1.0'
         },
 
         'host': 'localhost',
@@ -71,3 +70,23 @@ class Config:
 
     SECRET_KEY = 'IAMASECRETKEY'
 
+
+class DevelopmentConfig(Config):
+    pass
+
+
+class TestConfig(Config):
+    TESTING = True
+    # SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL', 'sqlite:///:memory:')
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=10)
+
+
+class ProductionConfig(Config):
+    pass
+
+
+config = {
+    'develop': DevelopmentConfig,
+    'testing': TestConfig,
+    'production': ProductionConfig
+}

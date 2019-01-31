@@ -1,26 +1,26 @@
 from flask import Flask
-from flask_jwt_extended import JWTManager
-from flasgger import Swagger
-from mongoengine import connect
 
 from app.api import Router
+from config import config
 
 
-def create_app(*config_obj):
-    app_ = Flask(__name__)
+def register_extension(flask_app: Flask):
+    from app import extension
+    extension.jwt.init_app(flask_app)
+    extension.swag.init_app(flask_app)
+    extension.swag.template = flask_app.config['SWAGGER_TEMPLATE']
 
-    for obj in config_obj:
-        app_.config.from_object(obj)
+    extension.db.connect(**flask_app.config['MONGODB_SETTINGS'])
 
-    connect(**app_.config['MONGODB_SETTINGS'])
-    # db.init_app(app_)
-    # app_.config['db'] = db
 
-    Router(app_)
+def create_app(config_name: str) -> Flask:
+    flask_app = Flask(__name__)
 
-    JWTManager().init_app(app_)
-    Swagger(template=app_.config['SWAGGER_TEMPLATE']).init_app(app_)
+    flask_app.config.from_object(config[config_name])
 
-    return app_
+    register_extension(flask_app)
+    Router(flask_app)
+
+    return flask_app
 
 
